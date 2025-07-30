@@ -13,10 +13,16 @@ LDFLAGS = -L/usr/local/lib -lraylib -lm -lpthread -ldl -lrt -lX11
 SRCS = $(wildcard src/*.c)
 
 # Executable name
-TARGET = tetris
+BIN_DIR = bin
+TARGET = $(BIN_DIR)/tetris
+
+# Ensure bin/ exists
+$(shell mkdir -p $(BIN_DIR))
 
 # Default target
 all: $(TARGET)
+
+build: clean $(TARGET)
 
 # Building the executable directly from source files
 $(TARGET): $(SRCS)
@@ -34,5 +40,8 @@ run: $(TARGET)
 clean:
 	rm -f $(TARGET)
 
+lint: format
+	clang-tidy $(SRCS) $(TEST_SRCS) -checks=-*,clang-analyzer-*,-clang-analyzer-cplusplus* -- $(CFLAGS) $(LDFLAGS)
+
 # Phony targets
-.PHONY: all clean run format
+.PHONY: all clean build run format lint
