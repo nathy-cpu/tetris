@@ -1,11 +1,16 @@
 #include "tetris.h"
 
-Array GetCellColors(Arena* arena)
-{
-    Array colors = Array_Init(arena, 8, sizeof(Color));
-    Color c[8] = { darkGrey, green, red, orange, yellow, purple, cyan, blue };
-    for (size_t i = 0; i < 8; i++) {
-        Array_Set(&colors, i, &c[i]);
-    }
+#define COLORS_NUM 8
+
+Array GetCellColors(void) {
+    Array colors = Array_Init(COLORS_NUM, sizeof(Color));
+    Array_Set(&colors, 0, &darkGrey);
+    Array_Set(&colors, 1, &blue);
+    Array_Set(&colors, 2, &orange);
+    Array_Set(&colors, 3, &cyan);
+    Array_Set(&colors, 4, &yellow);
+    Array_Set(&colors, 5, &green);
+    Array_Set(&colors, 6, &purple);
+    Array_Set(&colors, 7, &red);
     return colors;
 }
