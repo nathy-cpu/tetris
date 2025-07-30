@@ -1,7 +1,6 @@
 #include "tetris.h"
 
-int main(void)
-{
+int main(void) {
     InitWindow(500, 620, "Tetris");
     SetTargetFPS(60);
     Game* game = Game_Init();
@@ -12,4 +11,5 @@ int main(void)
 
     Game_Close(game);
     CloseWindow();
+    return 0;
 }
