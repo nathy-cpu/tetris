@@ -1,4 +1,5 @@
-#include "arena.h"
+#include "tetris.h"
+#include <stdlib.h>
 
 // Define the alignment boundary
 #define ALIGNMENT (sizeof(max_align_t))

@@ -1,15 +1,6 @@
-#include "game.h"
-
-#include <raylib.h>
-#include <stdbool.h>
-#include <stddef.h>
+#include "tetris.h"
+#include <stdio.h>
 #include <stdlib.h>
-
-#include "arena.h"
-#include "array.h"
-#include "block.h"
-#include "colors.h"
-#include "grid.h"
 
 bool EventTriggered(double interval)
 {
@@ -216,12 +207,12 @@ Block* Game_GetRandomBlock(Game* game)
     return (Block*)Array_Get(&game->blocks, randomIndex);
 }
 
-Array Game_GetAllBlocks(Game* game)
+Array Game_GetAllBlocks(const Game* game)
 {
     return game->blocks;
 }
 
-bool Game_IsBlockOutside(Game* game)
+bool Game_IsBlockOutside(const Game* game)
 {
     Array tiles = Block_GetCellPositions(game->currentBlock);
     for (size_t i = 0; i < Array_Size(&tiles); i++) {
@@ -271,7 +262,7 @@ void Game_LockBlock(Game* game)
     Array_Free(&tiles);
 }
 
-bool Game_BlockFits(Game* game)
+bool Game_BlockFits(const Game* game)
 {
     Array tiles = Block_GetCellPositions(game->currentBlock);
 

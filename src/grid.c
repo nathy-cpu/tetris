@@ -1,13 +1,6 @@
-#include "grid.h"
-
-#include <raylib.h>
-#include <stdbool.h>
-#include <stdint.h>
+#include "tetris.h"
 #include <stdio.h>
 #include <string.h>
-
-#include "arena.h"
-#include "colors.h"
 
 Grid* Grid_Init(Arena* arena)
 {

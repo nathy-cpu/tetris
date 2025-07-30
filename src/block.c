@@ -1,12 +1,5 @@
-#include "block.h"
-
-#include <raylib.h>
-#include <stddef.h>
-
-#include "arena.h"
-#include "array.h"
-#include "colors.h"
-#include "position.h"
+#include "tetris.h"
+#include <stdlib.h>
 
 // allocates on the heap. must be freed
 Array Block_GetCellPositions(const Block* block)
@@ -201,6 +194,8 @@ Block* Block_Init(Arena* arena, char type)
         }
         Block_Move(block, 0, 3);
         break;
+    default:
+        exit(1);
     }
     return block;
 }

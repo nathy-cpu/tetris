@@ -1,9 +1,4 @@
-#include "colors.h"
-
-#include <raylib.h>
-#include <stdlib.h>
-
-#include "array.h"
+#include "tetris.h"
 
 Array GetCellColors(Arena* arena)
 {

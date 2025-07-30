@@ -1,6 +1,4 @@
-#include <raylib.h>
-
-#include "game.h"
+#include "tetris.h"
 
 int main(void)
 {
