@@ -1,6 +1,10 @@
 #include "tetris.h"
-
 #ifdef _WIN32
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <windows.h>
 
 DWORD WINAPI thread_func_adapter(LPVOID arg)
 {
@@ -51,7 +55,29 @@ void SleepFor(int millisecond)
     Sleep(millisecond);
 }
 
+bool Thread_TimedJoin(Thread thread, unsigned int milliseconds)
+{
+    DWORD result = WaitForSingleObject(thread, milliseconds);
+    if (result == WAIT_OBJECT_0) {
+        CloseHandle(thread);
+        return true;
+    }
+    // Handle timeout or failure
+    return false;
+}
+
+void Thread_Cancel(Thread* thread)
+{
+    TerminateThread(thread.handle, 0);
+    CloseHandle(thread.handle);
+}
+
 #else // POSIX
+
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 void Thread_Init(Thread* thread, void* (*function)(void*), void* arg)
 {
@@ -85,7 +111,29 @@ void Mutex_Unlock(Mutex* mutex)
 
 void SleepFor(const int millisecond)
 {
-    sleep(millisecond * 1000);
+    usleep(millisecond * 1000);
+}
+
+bool Thread_TimedJoin(const Thread* thread, unsigned int milliseconds)
+{
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    ts.tv_sec += milliseconds / 1000;
+    ts.tv_nsec += (milliseconds % 1000) * 1000000;
+    // Normalize nanoseconds
+    if (ts.tv_nsec >= 1000000000) {
+        ts.tv_nsec -= 1000000000;
+        ts.tv_sec += 1;
+    }
+    const int result = pthread_timedjoin_np(*thread, NULL, &ts);
+    if (result == 0)
+        return true;
+    return false;
+}
+
+void Thread_Cancel(Thread* thread)
+{
+    pthread_cancel(*thread);
 }
 
 #endif

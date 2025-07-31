@@ -4,10 +4,24 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -g -std=c11 -Wall -Werror -Wextra -Wswitch-enum -Wunreachable-code -fsanitize=undefined -fsanitize=address
+CFLAGS = -g -D_GNU_SOURCE -std=gnu11 -Wall -Werror -Wextra -Wswitch-enum -Wunreachable-code -fsanitize=undefined -fsanitize=address
 
-# Linker flags
-LDFLAGS = -lraylib -lm -lpthread -ldl -lrt -lX11
+# Platform detection
+UNAME_S := $(shell uname -s)
+
+# Platform-specific settings
+ifeq ($(UNAME_S),Linux)
+    CFLAGS += -D_POSIX_C_SOURCE=200809L
+	LDFLAGS = -lraylib -lm -lpthread -ldl -lrt -lX11
+endif
+ifeq ($(UNAME_S),Darwin)
+    CFLAGS += -D_DARWIN_C_SOURCE
+    LDFLAGS = -lraylib -lpthread
+endif
+ifeq ($(OS),Windows_NT)
+    CFLAGS += -D_WIN32_WINNT=0x0600
+    LDFLAGS = -lraylib -lwinmm -lpthread
+endif
 
 # Source files
 SRCS = $(wildcard src/*.c)

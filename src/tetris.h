@@ -23,6 +23,10 @@ void Thread_Init(Thread* thread, void* (*function)(void*), void* arg);
 
 void Thread_Join(const Thread* thread);
 
+bool Thread_TimedJoin(const Thread* thread, unsigned int milliseconds);
+
+void Thread_Cancel(Thread* thread);
+
 void SleepFor(const int millisecond);
 
 void Mutex_Init(Mutex* mutex);

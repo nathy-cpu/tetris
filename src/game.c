@@ -17,19 +17,17 @@ bool EventTriggered(double* lastUpdateTime, const double interval)
 void* AudioThread(void* arg)
 {
     Game* game = (Game*)arg;
-    Mutex_Lock(&game->audioMutex);
-    bool running = game->audioThreadRunning;
-    Mutex_Unlock(&game->audioMutex);
 
-    while (running) {
+    while (true) {
         Mutex_Lock(&game->audioMutex);
         if (!game->audioThreadRunning) {
             Mutex_Unlock(&game->audioMutex);
+            break;
         }
 
         if (game->gameOver) {
             if (IsMusicStreamPlaying(game->music))
-                PauseMusicStream(game->music);
+                StopMusicStream(game->music);
         } else {
             if (!IsMusicStreamPlaying(game->music))
                 PlayMusicStream(game->music);
@@ -38,10 +36,10 @@ void* AudioThread(void* arg)
         }
 
         Mutex_Unlock(&game->audioMutex);
-        SleepFor(10); // 50ms
+        SleepFor(10);
     }
 
-    return 0;
+    return NULL;
 }
 
 void Game_StartAudioThread(Game* game)
@@ -63,7 +61,10 @@ void Game_StopAudioThread(Game* game)
     Mutex_Lock(&game->audioMutex);
     game->audioThreadRunning = false;
     Mutex_Unlock(&game->audioMutex);
-    Thread_Join(&game->audioThread);
+    // wait with a timeout
+    if (!Thread_TimedJoin(&game->audioThread, 1000)) {
+        Thread_Cancel(&game->audioThread);
+    }
     Mutex_Destroy(&game->audioMutex);
 }
 
@@ -75,6 +76,7 @@ Game* Game_Init()
     game->score = 0;
     game->numBlocks = NUM_BLOCKS;
     game->grid = Grid_Init();
+    game->audioThreadRunning = false;
 
     // Initialize block templates
     for (size_t i = 0; i < game->numBlocks; i++) {
@@ -101,9 +103,8 @@ Game* Game_Init()
     SetTextureFilter(game->tileSpriteSheet, TEXTURE_FILTER_POINT);
 
     // Initialize audio thread
-    // game->audioThreadRunning = false;
     // Mutex_Init(&game->audioMutex);
-    // Game_StartAudioThread(game);
+    Game_StartAudioThread(game);
 
     return game;
 }
@@ -118,6 +119,7 @@ void Game_Close(Game* game)
     // // wait for audio thread to finish
     // Thread_Join(&game->audioThread);
     // Mutex_Destroy(&game->audioMutex);
+    Game_StopAudioThread(game);
 
     for (size_t i = 0; i < game->numBlocks; i++) {
         Block_Free(game->blocks[i]);
@@ -147,6 +149,7 @@ void Game_Update(Game* game)
     static double dropTimer = 0;
     Game_HandleInput(game);
 
+    /*
     if (game->gameOver) {
         if (IsMusicStreamPlaying(game->music))
             StopMusicStream(game->music);
@@ -156,6 +159,7 @@ void Game_Update(Game* game)
 
         UpdateMusicStream(game->music);
     }
+    */
 
     if (EventTriggered(&dropTimer, 0.3))
         Game_MoveBlockDown(game);
