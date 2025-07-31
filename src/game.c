@@ -17,7 +17,11 @@ bool EventTriggered(double* lastUpdateTime, const double interval)
 void* AudioThread(void* arg)
 {
     Game* game = (Game*)arg;
-    while (game->audioThreadRunning) {
+    Mutex_Lock(&game->audioMutex);
+    bool running = game->audioThreadRunning;
+    Mutex_Unlock(&game->audioMutex);
+
+    while (running) {
         Mutex_Lock(&game->audioMutex);
         if (!game->audioThreadRunning) {
             Mutex_Unlock(&game->audioMutex);
@@ -34,7 +38,7 @@ void* AudioThread(void* arg)
         }
 
         Mutex_Unlock(&game->audioMutex);
-        SleepFor(50); // 50ms
+        SleepFor(10); // 50ms
     }
 
     return 0;
@@ -44,14 +48,21 @@ void Game_StartAudioThread(Game* game)
 {
     if (game->audioThreadRunning)
         return;
-    game->audioThreadRunning = true;
+
     Mutex_Init(&game->audioMutex);
+    Mutex_Lock(&game->audioMutex);
+    game->audioThreadRunning = true;
+    Mutex_Unlock(&game->audioMutex);
     Thread_Init(&game->audioThread, AudioThread, game);
 }
 
 void Game_StopAudioThread(Game* game)
 {
+    if (!game->audioThreadRunning)
+        return;
+    Mutex_Lock(&game->audioMutex);
     game->audioThreadRunning = false;
+    Mutex_Unlock(&game->audioMutex);
     Thread_Join(&game->audioThread);
     Mutex_Destroy(&game->audioMutex);
 }
