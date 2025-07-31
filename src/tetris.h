@@ -6,37 +6,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#ifdef _WIN32
-#include <windows.h>
-typedef HANDLE Thread;
-typedef CRITICAL_SECTION Mutex;
-#else
-#include <bits/pthreadtypes.h>
-#include <pthread.h>
-#include <unistd.h>
-typedef pthread_t Thread;
-typedef pthread_mutex_t Mutex;
-#endif
-
-// Thread handling abstraction
-void Thread_Init(Thread* thread, void* (*function)(void*), void* arg);
-
-void Thread_Join(const Thread* thread);
-
-bool Thread_TimedJoin(const Thread* thread, unsigned int milliseconds);
-
-void Thread_Cancel(Thread* thread);
-
-void SleepFor(const int millisecond);
-
-void Mutex_Init(Mutex* mutex);
-
-void Mutex_Destroy(Mutex* mutex);
-
-void Mutex_Lock(Mutex* mutex);
-
-void Mutex_Unlock(Mutex* mutex);
-
 // Position
 typedef struct
 {
@@ -44,28 +13,6 @@ typedef struct
     uint8_t column;
 
 } Position;
-
-Position Position_Init(uint8_t row, uint8_t column);
-
-// Array
-typedef struct
-{
-    size_t size;
-    size_t elementSize;
-    char* data;
-} Array;
-
-#define ARRAY_EMPTY (Array) { .data = NULL, .size = 0, .elementSize = 0 }
-
-Array Array_Init(size_t size, size_t elementSize);
-
-void Array_Set(Array* array, size_t index, const void* element);
-
-void* Array_Get(const Array* array, size_t index);
-
-size_t Array_Size(const Array* array);
-
-void Array_Free(Array* array);
 
 // Block
 #define ROTATION_STATES 4
@@ -175,10 +122,6 @@ typedef struct
     uint32_t score;
     bool gameOver;
 
-    // Audio thread management
-    Thread audioThread;
-    Mutex audioMutex;
-    bool audioThreadRunning;
 } Game;
 
 Game* Game_Init();

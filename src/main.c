@@ -9,6 +9,7 @@ int main(void)
     while (!WindowShouldClose()) {
         Game_Update(game);
         Game_Draw(game);
+        DrawFPS(0, 0);
     }
 
     Game_Close(game);
