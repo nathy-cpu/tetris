@@ -22,7 +22,6 @@ Game* Game_Init()
     game->score = 0;
     game->numBlocks = NUM_BLOCKS;
     game->grid = Grid_Init();
-    // game->audioThreadRunning = false;
 
     // Initialize block templates
     for (size_t i = 0; i < game->numBlocks; i++) {
@@ -48,25 +47,11 @@ Game* Game_Init()
     game->tileSpriteSheet = LoadTexture("assets/textures/tiles.png");
     SetTextureFilter(game->tileSpriteSheet, TEXTURE_FILTER_POINT);
 
-    // Initialize audio thread
-    // Mutex_Init(&game->audioMutex);
-    // Game_StartAudioThread(game);
-
     return game;
 }
 
 void Game_Close(Game* game)
 {
-    // // signal to stop audio thread
-    // Mutex_Lock(&game->audioMutex);
-    // game->audioThreadRunning = false;
-    // Mutex_Unlock(&game->audioMutex);
-    //
-    // // wait for audio thread to finish
-    // Thread_Join(&game->audioThread);
-    // Mutex_Destroy(&game->audioMutex);
-    // Game_StopAudioThread(game);
-
     for (size_t i = 0; i < game->numBlocks; i++) {
         Block_Free(game->blocks[i]);
     }
@@ -76,13 +61,13 @@ void Game_Close(Game* game)
     Block_Free(game->shadowBlock);
     Grid_Free(game->grid);
 
-    StopMusicStream(game->music);
-    UnloadMusicStream(game->music);
     UnloadSound(game->rotateSound);
     UnloadSound(game->clearSound);
     UnloadSound(game->moveSound);
     UnloadSound(game->hardDropSound);
     UnloadSound(game->softDropSound);
+    StopMusicStream(game->music);
+    UnloadMusicStream(game->music);
 
     UnloadFont(game->font);
     UnloadTexture(game->tileSpriteSheet);
