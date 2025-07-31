@@ -1,10 +1,13 @@
 # Makefile for Raylib project
 
+# Default build type (debug)
+BUILD ?= debug
+
 # Compiler
 CC = gcc
 
 # Compiler flags
-CFLAGS = -g -D_GNU_SOURCE -std=gnu11 -Wall -Werror -Wextra -Wswitch-enum -Wunreachable-code -fsanitize=undefined -fsanitize=address
+CFLAGS = -std=gnu11 -Wall -Werror -Wextra -Wswitch-enum -Wunreachable-code
 
 # Platform detection
 UNAME_S := $(shell uname -s)
@@ -16,11 +19,19 @@ ifeq ($(UNAME_S),Linux)
 endif
 ifeq ($(UNAME_S),Darwin)
     CFLAGS += -D_DARWIN_C_SOURCE
-    LDFLAGS = -lraylib -lpthread
+    LDFLAGS = -lraylib -lpthread -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo -framework CoreAudio -framework AudioToolbox -framework ForceFeedback -framework SystemConfiguration -framework CoreGraphics
 endif
-ifeq ($(OS),Windows_NT)
+ifeq ($(UNAME_S),Windows_NT)
     CFLAGS += -D_WIN32_WINNT=0x0600
-    LDFLAGS = -lraylib -lwinmm -lpthread
+    LDFLAGS = -lraylib -lwinmm -lgdi32
+endif
+
+# Build-specific flags
+ifeq ($(BUILD),release)
+    CFLAGS += -O3 -DNDEBUG
+    LDFLAGS += -s
+else
+    CFLAGS += -g -O0 -fsanitize=undefined -fsanitize=address
 endif
 
 # Source files
