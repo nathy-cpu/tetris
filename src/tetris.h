@@ -115,12 +115,14 @@ static const Color darkBlue = (Color) { 44, 44, 127, 255 };
 #define GRID_COLUMNS 10
 #define GRID_CELL_SIZE 30
 
-typedef struct {
-    Color colors[8];
+typedef struct
+{
+    Color colors[NUM_COLORS];
     int cellSize;
     uint8_t numRows;
     uint8_t numCols;
     uint8_t grid[GRID_ROWS][GRID_COLUMNS];
+
 } Grid;
 
 Grid* Grid_Init();
@@ -148,7 +150,10 @@ void Grid_MoveRowDown(Grid* grid, uint8_t row, uint8_t numRows);
 uint8_t Grid_ClearFullRows(Grid* grid);
 
 // Game
-typedef struct {
+#define NUM_BLOCKS 7
+
+typedef struct
+{
     Music music;
     Font font;
     Sound rotateSound;
@@ -156,7 +161,7 @@ typedef struct {
     Sound moveSound;
     Sound softDropSound;
     Sound hardDropSound;
-    Block* blocks[7]; // Fixed array of block templates
+    Block* blocks[NUM_BLOCKS];
     size_t numBlocks;
     Texture2D tileSpriteSheet;
     Grid* grid;
@@ -188,7 +193,7 @@ void Game_MoveBlockRight(Game* game);
 
 void Game_MoveBlockLeft(Game* game);
 
-Block* Game_GetRandomBlock(Game* game);
+Block* Game_GetRandomBlock(const Game* game);
 
 bool Game_IsBlockOutside(const Game* game);
 

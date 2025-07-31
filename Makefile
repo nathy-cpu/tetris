@@ -4,10 +4,10 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -g -std=c11 -Wall -Werror -Wextra -Wswitch-enum -Wunreachable-code -fsanitize=undefined -fsanitize=address -I/usr/local/include
+CFLAGS = -g -std=c11 -Wall -Werror -Wextra -Wswitch-enum -Wunreachable-code -fsanitize=undefined -fsanitize=address
 
 # Linker flags
-LDFLAGS = -L/usr/local/lib -lraylib -lm -lpthread -ldl -lrt -lX11
+LDFLAGS = -lraylib -lm -lpthread -ldl -lrt -lX11
 
 # Source files
 SRCS = $(wildcard src/*.c)
