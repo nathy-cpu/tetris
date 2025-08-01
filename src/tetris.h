@@ -9,8 +9,8 @@
 // Position
 typedef struct
 {
-    uint8_t row;
-    uint8_t column;
+    int8_t row;
+    int8_t column;
 
 } Position;
 
@@ -71,42 +71,42 @@ static const Color green = (Color) { 47, 230, 23, 255 };
 static const Color purple = (Color) { 166, 0, 247, 255 };
 static const Color red = (Color) { 232, 18, 18, 255 };
 
-// Grid
+// Board
 
-#define GRID_ROWS 20
-#define GRID_COLUMNS 10
-#define GRID_CELL_SIZE 30
-#define GRID_PADDING 11
+#define BOARD_ROWS 20
+#define BOARD_COLUMNS 10
+#define BOARD_CELL_SIZE 30
+#define BOARD_PADDING 11
 
 typedef struct
 {
     uint8_t numRows;
     uint8_t numCols;
-    uint8_t grid[GRID_ROWS][GRID_COLUMNS];
+    uint8_t grid[BOARD_ROWS][BOARD_COLUMNS];
 
-} Grid;
+} Board;
 
-Grid* Grid_Init();
+Board* Board_Init();
 
-void Grid_Free(Grid* grid);
+void Board_Free(Board* board);
 
-void Grid_Reset(Grid* grid);
+void Board_Reset(Board* board);
 
-void Grid_Print(const Grid* grid);
+void Board_Print(const Board* board);
 
-void Grid_Draw(const Grid* grid, Texture2D tileSpriteSheet);
+void Board_Draw(const Board* board, Texture2D tileSpriteSheet);
 
-bool Grid_IsCellOutside(const Grid* grid, int8_t row, int8_t column);
+bool Board_IsCellOutside(const Board* board, int8_t row, int8_t column);
 
-bool Grid_IsEmpty(const Grid* grid, uint8_t row, uint8_t column);
+bool Board_IsEmpty(const Board* board, uint8_t row, uint8_t column);
 
-bool Grid_IsRowFull(const Grid* grid, uint8_t row);
+bool Board_IsRowFull(const Board* board, uint8_t row);
 
-void Grid_ClearRow(Grid* grid, uint8_t row);
+void Board_ClearRow(Board* board, uint8_t row);
 
-void Grid_MoveRowDown(Grid* grid, uint8_t row, uint8_t numRows);
+void Board_MoveRowDown(Board* board, uint8_t row, uint8_t numRows);
 
-uint8_t Grid_ClearFullRows(Grid* grid);
+uint8_t Board_ClearFullRows(Board* board);
 
 // Game
 #define NUM_BLOCKS 7
@@ -122,7 +122,7 @@ typedef struct
     Sound hardDropSound;
     size_t numBlocks;
     Texture2D tileSpriteSheet;
-    Grid* grid;
+    Board* board;
     Block* currentBlock;
     Block* nextBlock;
     Block* shadowBlock;
@@ -333,5 +333,6 @@ static const uint8_t BLOCK_ROTAIONS[NUM_BLOCKS] = {
 #define SCREEN_TITLE "Tetris"
 #define FONT_SIZE 38
 #define FONT_SPACING 2
+#define SPRITE_SIZE 16
 
 #endif // TETRIS_H

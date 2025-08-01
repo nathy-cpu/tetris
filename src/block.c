@@ -22,8 +22,8 @@ void Block_Draw(const Block* block, int offsetX, int offsetY, Texture2D tileSpri
     for (size_t i = 0; i < count; i++) {
         DrawTexturePro(
             tileSpriteSheet,
-            (Rectangle) { (block->id - 1) * 16, 0, 16, 16 },
-            (Rectangle) { positions[i].column * CELL_SIZE + offsetX, positions[i].row * CELL_SIZE + offsetY, CELL_SIZE - 1, CELL_SIZE - 1 },
+            (Rectangle) { (block->id - 1) * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE },
+            (Rectangle) { positions[i].column * CELL_SIZE + offsetX, positions[i].row * CELL_SIZE + offsetY, CELL_SIZE, CELL_SIZE },
             (Vector2) { 0, 0 }, 0, Fade(WHITE, opacity));
     }
 }
@@ -52,7 +52,6 @@ void Block_UndoRotation(Block* block)
 Block* Block_Init(enum BlockType type)
 {
     Block* block = malloc(sizeof(Block));
-    // CELL_SIZE = 30;
     block->rotationState = 0;
     block->rowOffset = 0;
     block->columnOffset = 0;

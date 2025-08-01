@@ -21,7 +21,7 @@ Game* Game_Init()
     game->gameOver = false;
     game->score = 0;
     game->numBlocks = NUM_BLOCKS;
-    game->grid = Grid_Init();
+    game->board = Board_Init();
 
     // Spawn initial blocks
     game->currentBlock = GetRandomBlock();
@@ -48,7 +48,7 @@ void Game_Close(Game* game)
     Block_Free(game->currentBlock);
     Block_Free(game->nextBlock);
     Block_Free(game->shadowBlock);
-    Grid_Free(game->grid);
+    Board_Free(game->board);
 
     UnloadSound(game->rotateSound);
     UnloadSound(game->clearSound);
@@ -85,7 +85,7 @@ void Game_Update(Game* game)
 
 void Game_Draw(const Game* game)
 {
-    assert(game->grid != NULL);
+    assert(game->board != NULL);
     assert(game->currentBlock != NULL);
     assert(game->nextBlock != NULL);
     BeginDrawing();
@@ -105,7 +105,7 @@ void Game_Draw(const Game* game)
 
     DrawTextEx(game->font, scoreText, (Vector2) { 320 + (170 - textSize.x) / 2, 65 }, FONT_SIZE, FONT_SPACING, WHITE);
     DrawRectangleRounded((Rectangle) { 320, 215, 170, 180 }, 0.3f, 6, lightBlue);
-    Grid_Draw(game->grid, game->tileSpriteSheet);
+    Board_Draw(game->board, game->tileSpriteSheet);
     Block_Draw(game->currentBlock, 11, 11, game->tileSpriteSheet, 1.0);
 
     switch (game->nextBlock->id) {
@@ -214,7 +214,7 @@ bool Game_IsBlockOutside(const Game* game)
     Block_GetCellPositions(game->currentBlock, positions, &count);
 
     for (size_t i = 0; i < count; i++) {
-        if (Grid_IsCellOutside(game->grid, positions[i].row, positions[i].column)) {
+        if (Board_IsCellOutside(game->board, positions[i].row, positions[i].column)) {
             return true;
         }
     }
@@ -243,9 +243,9 @@ void Game_LockBlock(Game* game)
     assert(count > 0);
 
     for (size_t i = 0; i < count; i++) {
-        assert(positions[i].row < GRID_ROWS);
-        assert(positions[i].column < GRID_COLUMNS);
-        game->grid->grid[positions[i].row][positions[i].column] = game->currentBlock->id;
+        assert(positions[i].row < BOARD_ROWS);
+        assert(positions[i].column < BOARD_COLUMNS);
+        game->board->grid[positions[i].row][positions[i].column] = game->currentBlock->id;
     }
 
     Block_Free(game->currentBlock);
@@ -256,7 +256,7 @@ void Game_LockBlock(Game* game)
     if (Game_BlockFits(game) == false)
         game->gameOver = true;
 
-    unsigned int rowsCleared = Grid_ClearFullRows(game->grid);
+    unsigned int rowsCleared = Board_ClearFullRows(game->board);
     if (rowsCleared > 0) {
         PlaySound(game->clearSound);
         Game_UpdateScore(game, rowsCleared, 0);
@@ -271,7 +271,7 @@ bool Game_BlockFits(const Game* game)
     Block_GetCellPositions(game->currentBlock, positions, &count);
 
     for (size_t i = 0; i < count; i++) {
-        if (Grid_IsEmpty(game->grid, positions[i].row, positions[i].column) == false) {
+        if (Board_IsEmpty(game->board, positions[i].row, positions[i].column) == false) {
             return false;
         }
     }
@@ -280,8 +280,8 @@ bool Game_BlockFits(const Game* game)
 
 void Game_Reset(Game* game)
 {
-    assert(game->grid != NULL);
-    Grid_Reset(game->grid);
+    assert(game->board != NULL);
+    Board_Reset(game->board);
 
     // Free current blocks
     Block_Free(game->currentBlock);
