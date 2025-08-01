@@ -58,7 +58,7 @@ format:
 	find src -iname '*.c' -o -iname '*.h' | xargs clang-format -i -style=Webkit
 
 # Run target to build and execute the program
-run: $(TARGET)
+run: build
 	./$(TARGET)
 
 # Clean target

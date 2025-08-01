@@ -26,7 +26,7 @@ Game* Game_Init()
     // Spawn initial blocks
     game->currentBlock = GetRandomBlock();
     game->nextBlock = GetRandomBlock();
-    game->shadowBlock = GetRandomBlock();
+    game->shadowBlock = Block_Clone(game->currentBlock);
 
     // Initialize audio and graphics
     InitAudioDevice();
@@ -68,6 +68,7 @@ void Game_Update(Game* game)
 {
     static double dropTimer = 0;
     Game_HandleInput(game);
+    Game_UpdateShadowBlock(game);
 
     if (game->gameOver) {
         if (IsMusicStreamPlaying(game->music))
@@ -107,6 +108,7 @@ void Game_Draw(const Game* game)
     DrawRectangleRounded((Rectangle) { 320, 215, 170, 180 }, 0.3f, 6, lightBlue);
     Board_Draw(game->board, game->tileSpriteSheet);
     Block_Draw(game->currentBlock, 11, 11, game->tileSpriteSheet, 1.0);
+    Block_Draw(game->shadowBlock, 11, 11, game->tileSpriteSheet, 0.2);
 
     switch (game->nextBlock->id) {
     case 3:
@@ -206,19 +208,24 @@ void Game_MoveBlockLeft(Game* game)
     }
 }
 
-bool Game_IsBlockOutside(const Game* game)
-{
-    assert(game->currentBlock != NULL);
+bool isBlockOutside(const Board* board, const Block* block) {
+    assert(board && block);
     Position positions[4];
     size_t count;
-    Block_GetCellPositions(game->currentBlock, positions, &count);
+    Block_GetCellPositions(block, positions, &count);
 
     for (size_t i = 0; i < count; i++) {
-        if (Board_IsCellOutside(game->board, positions[i].row, positions[i].column)) {
+        if (Board_IsCellOutside(board, positions[i].row, positions[i].column)) {
             return true;
         }
     }
     return false;
+}
+
+bool Game_IsBlockOutside(const Game* game)
+{
+    assert(game->currentBlock != NULL);
+    return isBlockOutside(game->board, game->currentBlock);
 }
 
 void Game_RotateBlock(Game* game)
@@ -260,22 +267,37 @@ void Game_LockBlock(Game* game)
     if (rowsCleared > 0) {
         PlaySound(game->clearSound);
         Game_UpdateScore(game, rowsCleared, 0);
+    } else {
+        PlaySound(game->softDropSound);
     }
+}
+
+bool blockFits(const Board* board, const Block* block) {
+    Position positions[NUM_BLOCK_CELLS];
+    size_t count;
+    Block_GetCellPositions(block, positions, &count);
+
+    for (size_t i = 0; i < count; i++) {
+        if (Board_IsEmpty(board, positions[i].row, positions[i].column) == false) {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool Game_BlockFits(const Game* game)
 {
     assert(game->currentBlock != NULL);
-    Position positions[NUM_BLOCK_CELLS];
-    size_t count;
-    Block_GetCellPositions(game->currentBlock, positions, &count);
+    return blockFits(game->board, game->currentBlock);
+}
 
-    for (size_t i = 0; i < count; i++) {
-        if (Board_IsEmpty(game->board, positions[i].row, positions[i].column) == false) {
-            return false;
-        }
-    }
-    return true;
+void Game_UpdateShadowBlock(Game* game) {
+    Block_Copy(game->shadowBlock, game->currentBlock);
+
+    while (!isBlockOutside(game->board, game->shadowBlock) && blockFits(game->board, game->shadowBlock))
+        Block_Move(game->shadowBlock, (Position) { 1, 0 });
+
+    Block_Move(game->shadowBlock, (Position) { -1, 0 });
 }
 
 void Game_Reset(Game* game)

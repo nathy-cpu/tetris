@@ -55,6 +55,8 @@ Block* Block_Init(enum BlockType type);
 
 Block* Block_Clone(const Block* src);
 
+void Block_Copy(Block* dest, const Block* src);
+
 void Block_Free(Block* block);
 
 Block* GetRandomBlock();
@@ -154,6 +156,8 @@ void Game_RotateBlock(Game* game);
 void Game_LockBlock(Game* game);
 
 bool Game_BlockFits(const Game* game);
+
+void Game_UpdateShadowBlock(Game* game);
 
 void Game_Reset(Game* game);
 

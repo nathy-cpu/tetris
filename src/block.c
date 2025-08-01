@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "tetris.h"
 #include <stddef.h>
 #include <stdio.h>
@@ -67,6 +69,11 @@ Block* Block_Clone(const Block* src)
     Block* block = malloc(sizeof(Block));
     memcpy(block, src, sizeof(Block));
     return block;
+}
+
+void Block_Copy(Block* dest, const Block* src) {
+    assert(dest && src);
+    memcpy(dest, src, sizeof(Block));
 }
 
 void Block_Free(Block* block)
