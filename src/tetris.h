@@ -57,6 +57,8 @@ Block* Block_Clone(const Block* src);
 
 void Block_Free(Block* block);
 
+Block* GetRandomBlock();
+
 // Colors
 static const Color darkGrey = (Color) { 26, 31, 40, 255 };
 static const Color lightBlue = (Color) { 59, 85, 162, 255 };
@@ -68,8 +70,6 @@ static const Color yellow = (Color) { 237, 234, 4, 255 };
 static const Color green = (Color) { 47, 230, 23, 255 };
 static const Color purple = (Color) { 166, 0, 247, 255 };
 static const Color red = (Color) { 232, 18, 18, 255 };
-
-static const Color BLOCK_COLORS[NUM_COLORS] = { darkGrey, blue, orange, cyan, yellow, green, purple, red };
 
 // Grid
 
@@ -120,7 +120,6 @@ typedef struct
     Sound moveSound;
     Sound softDropSound;
     Sound hardDropSound;
-    Block* blocks[NUM_BLOCKS];
     size_t numBlocks;
     Texture2D tileSpriteSheet;
     Grid* grid;
@@ -147,8 +146,6 @@ void Game_MoveBlockDown(Game* game);
 void Game_MoveBlockRight(Game* game);
 
 void Game_MoveBlockLeft(Game* game);
-
-Block* Game_GetRandomBlock(const Game* game);
 
 bool Game_IsBlockOutside(const Game* game);
 

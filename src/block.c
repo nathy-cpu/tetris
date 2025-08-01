@@ -76,3 +76,9 @@ void Block_Free(Block* block)
         free(block);
     }
 }
+
+Block* GetRandomBlock()
+{
+    const int randomType = GetRandomValue(0, INT32_MAX) % NUM_BLOCKS;
+    return Block_Init((enum BlockType)randomType + 1);
+}

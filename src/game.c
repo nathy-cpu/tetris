@@ -23,16 +23,10 @@ Game* Game_Init()
     game->numBlocks = NUM_BLOCKS;
     game->grid = Grid_Init();
 
-    // Initialize block templates
-    for (uint8_t i = 1; i <= game->numBlocks; i++) {
-        game->blocks[i - 1] = Block_Init((enum BlockType)i);
-        assert(game->blocks[i] != NULL);
-    }
-
     // Spawn initial blocks
-    game->currentBlock = Block_Clone(game->blocks[GetRandomValue(0, INT32_MAX) % game->numBlocks]);
-    game->nextBlock = Block_Clone(game->blocks[GetRandomValue(0, INT32_MAX) % game->numBlocks]);
-    game->shadowBlock = Block_Clone(game->blocks[GetRandomValue(0, INT32_MAX) % game->numBlocks]);
+    game->currentBlock = GetRandomBlock();
+    game->nextBlock = GetRandomBlock();
+    game->shadowBlock = GetRandomBlock();
 
     // Initialize audio and graphics
     InitAudioDevice();
@@ -51,10 +45,6 @@ Game* Game_Init()
 
 void Game_Close(Game* game)
 {
-    for (size_t i = 0; i < game->numBlocks; i++) {
-        Block_Free(game->blocks[i]);
-    }
-
     Block_Free(game->currentBlock);
     Block_Free(game->nextBlock);
     Block_Free(game->shadowBlock);
@@ -216,12 +206,6 @@ void Game_MoveBlockLeft(Game* game)
     }
 }
 
-Block* Game_GetRandomBlock(const Game* game)
-{
-    int randomIndex = GetRandomValue(0, INT32_MAX) % NUM_BLOCKS;
-    return Block_Clone(game->blocks[randomIndex]);
-}
-
 bool Game_IsBlockOutside(const Game* game)
 {
     assert(game->currentBlock != NULL);
@@ -264,18 +248,13 @@ void Game_LockBlock(Game* game)
         game->grid->grid[positions[i].row][positions[i].column] = game->currentBlock->id;
     }
 
-    // Free the old current block
     Block_Free(game->currentBlock);
-
-    // Move nextBlock to currentBlock
     game->currentBlock = game->nextBlock;
     game->currentBlock->rotationState = 0;
+    game->nextBlock = GetRandomBlock();
 
     if (Game_BlockFits(game) == false)
         game->gameOver = true;
-
-    // Create new nextBlock
-    game->nextBlock = Game_GetRandomBlock(game);
 
     unsigned int rowsCleared = Grid_ClearFullRows(game->grid);
     if (rowsCleared > 0) {
@@ -310,9 +289,9 @@ void Game_Reset(Game* game)
     Block_Free(game->shadowBlock);
 
     // Create new blocks
-    game->currentBlock = Game_GetRandomBlock(game);
-    game->nextBlock = Game_GetRandomBlock(game);
-    game->shadowBlock = Game_GetRandomBlock(game);
+    game->currentBlock = GetRandomBlock();
+    game->nextBlock = GetRandomBlock();
+    game->shadowBlock = GetRandomBlock();
     game->score = 0;
 }
 
