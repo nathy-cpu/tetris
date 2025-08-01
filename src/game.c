@@ -25,7 +25,6 @@ Game* Game_Init()
 
     // Initialize block templates
     for (uint8_t i = 1; i <= game->numBlocks; i++) {
-        // const char blockTypes[NUM_BLOCKS] = { 'I', 'J', 'L', 'O', 'S', 'T', 'Z' };
         game->blocks[i - 1] = Block_Init((enum BlockType)i);
         assert(game->blocks[i] != NULL);
     }

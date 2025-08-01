@@ -36,18 +36,17 @@ void Grid_Print(const Grid* grid)
 
 void Grid_Draw(const Grid* grid, Texture2D tileSpriteSheet)
 {
+    DrawRectangle(
+        GRID_PADDING,
+        GRID_PADDING,
+        (GRID_CELL_SIZE * GRID_COLUMNS),
+        SCREEN_HEIGHT - GRID_PADDING * 2,
+        darkGrey);
+
     for (int row = 0; row < grid->numRows; row++) {
         for (int column = 0; column < grid->numCols; column++) {
             int cellValue = grid->grid[row][column];
-            // draw each reactangle 11 pixels away from the top and left borders
-            if (cellValue == 0) {
-                DrawRectangle(
-                    column * GRID_CELL_SIZE + 11,
-                    row * GRID_CELL_SIZE + 11,
-                    GRID_CELL_SIZE,
-                    GRID_CELL_SIZE,
-                    BLOCK_COLORS[cellValue]);
-            } else {
+            if (cellValue != 0) {
                 DrawTexturePro(tileSpriteSheet,
                     (Rectangle) { (cellValue - 1) * 16, 0, 16, 16 },
                     (Rectangle) { column * GRID_CELL_SIZE + GRID_PADDING, row * GRID_CELL_SIZE + GRID_PADDING, GRID_CELL_SIZE - 1,
