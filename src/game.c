@@ -157,15 +157,14 @@ void Game_MoveBlockDown(Game* game)
         Block_Move(game->currentBlock, (Position) { 1, 0 });
         if (Game_IsBlockOutside(game) || Game_BlockFits(game) == false) {
             Block_Move(game->currentBlock, (Position) { -1, 0 });
-            Game_LockBlock(game);
+            Game_LockBlock(game, false);
         }
     }
 }
 
 void Game_DropBlock(Game* game) {
     Block_Copy(game->currentBlock, game->shadowBlock);
-    Game_LockBlock(game);
-    PlaySound(game->hardDropSound);
+    Game_LockBlock(game, true);
 }
 
 void Game_MoveBlockRight(Game* game)
@@ -219,7 +218,7 @@ void Game_RotateBlock(Game* game)
     }
 }
 
-void Game_LockBlock(Game* game)
+void Game_LockBlock(Game* game, bool isHardDrop)
 {
     assert(game->currentBlock != NULL);
     Position positions[NUM_BLOCK_CELLS];
@@ -246,7 +245,10 @@ void Game_LockBlock(Game* game)
         PlaySound(game->clearSound);
         Game_UpdateScore(game, rowsCleared, 0);
     } else {
-        PlaySound(game->softDropSound);
+        if (isHardDrop)
+            PlaySound(game->hardDropSound);
+        else
+            PlaySound(game->softDropSound);
     }
 }
 

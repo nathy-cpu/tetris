@@ -155,7 +155,7 @@ bool Game_IsBlockOutside(const Game* game);
 
 void Game_RotateBlock(Game* game);
 
-void Game_LockBlock(Game* game);
+void Game_LockBlock(Game* game, bool isHardDrop);
 
 bool Game_BlockFits(const Game* game);
 
