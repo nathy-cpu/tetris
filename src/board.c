@@ -40,7 +40,7 @@ void Board_Draw(const Board* board, Texture2D tileSpriteSheet)
         BOARD_PADDING,
         BOARD_PADDING,
         (BOARD_CELL_SIZE * BOARD_COLUMNS),
-        SCREEN_HEIGHT - BOARD_PADDING * 2,
+        BOARD_ROWS * BOARD_CELL_SIZE,
         darkGrey);
 
     for (int row = 0; row < board->numRows; row++) {
