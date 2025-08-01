@@ -149,6 +149,8 @@ void Game_MoveBlockRight(Game* game);
 
 void Game_MoveBlockLeft(Game* game);
 
+void Game_DropBlock(Game* game);
+
 bool Game_IsBlockOutside(const Game* game);
 
 void Game_RotateBlock(Game* game);

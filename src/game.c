@@ -67,8 +67,8 @@ void Game_Close(Game* game)
 void Game_Update(Game* game)
 {
     static double dropTimer = 0;
-    Game_HandleInput(game);
     Game_UpdateShadowBlock(game);
+    Game_HandleInput(game);
 
     if (game->gameOver) {
         if (IsMusicStreamPlaying(game->music))
@@ -126,11 +126,6 @@ void Game_Draw(const Game* game)
 
 void Game_HandleInput(Game* game)
 {
-    static float moveDelay = 0.0f;
-    const float initialDelay = 0.3f;
-    const float repeatDelay = 0.07f;
-    const float frameTime = GetFrameTime();
-
     const int keyPressed = GetKeyPressed();
 
     if (game->gameOver && keyPressed != 0) {
@@ -146,36 +141,13 @@ void Game_HandleInput(Game* game)
         Game_MoveBlockRight(game);
         break;
     case KEY_DOWN:
-        Game_MoveBlockDown(game);
+        Game_DropBlock(game);
         break;
     case KEY_UP:
         Game_RotateBlock(game);
         break;
     default:
         break;
-    }
-
-    if (IsKeyDown(KEY_LEFT)) {
-        moveDelay += frameTime;
-        if (moveDelay >= initialDelay) {
-            Game_MoveBlockLeft(game);
-            moveDelay = initialDelay - repeatDelay;
-        }
-    } else if (IsKeyDown(KEY_RIGHT)) {
-        moveDelay += frameTime;
-        if (moveDelay >= initialDelay) {
-            Game_MoveBlockRight(game);
-            moveDelay = initialDelay - repeatDelay;
-        }
-    } else if (IsKeyDown(KEY_DOWN)) {
-        moveDelay += frameTime;
-        if (moveDelay >= initialDelay) {
-            Game_MoveBlockDown(game);
-            moveDelay = initialDelay - repeatDelay;
-        }
-    } else {
-        // Reset the delay if no movement key is pressed
-        moveDelay = 0.0f;
     }
 }
 
@@ -188,6 +160,12 @@ void Game_MoveBlockDown(Game* game)
             Game_LockBlock(game);
         }
     }
+}
+
+void Game_DropBlock(Game* game) {
+    Block_Copy(game->currentBlock, game->shadowBlock);
+    Game_LockBlock(game);
+    PlaySound(game->hardDropSound);
 }
 
 void Game_MoveBlockRight(Game* game)
