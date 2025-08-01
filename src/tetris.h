@@ -15,16 +15,25 @@ typedef struct
 } Position;
 
 // Block
+
+enum BlockType : uint8_t {
+    L = 1,
+    J,
+    I,
+    O,
+    S,
+    T,
+    Z
+};
+
 #define ROTATION_STATES 4
 #define NUM_BLOCK_CELLS 4
 #define NUM_COLORS 8
+#define CELL_SIZE 30
 
 typedef struct
 {
-    Position cells[ROTATION_STATES][NUM_BLOCK_CELLS];
-    Color colors[NUM_COLORS];
     uint8_t id;
-    uint8_t cellSize;
     int8_t rotationState;
     uint8_t rowOffset;
     uint8_t columnOffset;
@@ -34,15 +43,15 @@ typedef struct
 
 void Block_GetCellPositions(const Block* block, Position* positions, size_t* count);
 
-void Block_Draw(const Block* block, int offsetX, int offsetY);
+void Block_Draw(const Block* block, int offsetX, int offsetY, Texture2D tileSpriteSheet, float opacity);
 
-void Block_Move(Block* block, int rows, int columns);
+void Block_Move(Block* block, Position position);
 
 void Block_Rotate(Block* block);
 
 void Block_UndoRotation(Block* block);
 
-Block* Block_Init(char type);
+Block* Block_Init(enum BlockType type);
 
 Block* Block_Clone(const Block* src);
 
@@ -60,16 +69,17 @@ static const Color blue = (Color) { 13, 64, 216, 255 };
 static const Color lightBlue = (Color) { 59, 85, 162, 255 };
 static const Color darkBlue = (Color) { 44, 44, 127, 255 };
 
+static const Color BLOCK_COLORS[NUM_COLORS] = { darkGrey, blue, orange, cyan, yellow, green, purple, red };
+
 // Grid
 
 #define GRID_ROWS 20
 #define GRID_COLUMNS 10
 #define GRID_CELL_SIZE 30
+#define GRID_PADDING 11
 
 typedef struct
 {
-    Color colors[NUM_COLORS];
-    int cellSize;
     uint8_t numRows;
     uint8_t numCols;
     uint8_t grid[GRID_ROWS][GRID_COLUMNS];
@@ -82,11 +92,9 @@ void Grid_Free(Grid* grid);
 
 void Grid_Reset(Grid* grid);
 
-Color Grid_GetCellColor(const Grid* grid, uint8_t cellValue);
-
 void Grid_Print(const Grid* grid);
 
-void Grid_Draw(const Grid* grid);
+void Grid_Draw(const Grid* grid, Texture2D tileSpriteSheet);
 
 bool Grid_IsCellOutside(const Grid* grid, int8_t row, int8_t column);
 
@@ -153,5 +161,180 @@ bool Game_BlockFits(const Game* game);
 void Game_Reset(Game* game);
 
 void Game_UpdateScore(Game* game, uint32_t linesCleared, uint32_t moveDownPoints);
+
+static const Position BLOCK_LAYOUTS[NUM_BLOCKS][ROTATION_STATES][NUM_BLOCK_CELLS] = {
+    { // L
+        {
+            (Position) { 0, 2 },
+            (Position) { 1, 0 },
+            (Position) { 1, 1 },
+            (Position) { 1, 2 } },
+        { (Position) { 0, 1 },
+            (Position) { 1, 1 },
+            (Position) { 2, 1 },
+            (Position) { 2, 2 } },
+        { (Position) { 1, 0 },
+            (Position) { 1, 1 },
+            (Position) { 1, 2 },
+            (Position) { 2, 0 } },
+        { (Position) { 0, 0 },
+            (Position) { 0, 1 },
+            (Position) { 1, 1 },
+            (Position) { 2, 1 } } },
+    { // J
+        {
+            (Position) { 0, 0 },
+            (Position) { 1, 0 },
+            (Position) { 1, 1 },
+            (Position) { 1, 2 },
+        },
+        {
+            (Position) { 0, 1 },
+            (Position) { 0, 2 },
+            (Position) { 1, 1 },
+            (Position) { 2, 1 },
+        },
+        {
+            (Position) { 1, 0 },
+            (Position) { 1, 1 },
+            (Position) { 1, 2 },
+            (Position) { 2, 2 },
+        },
+        {
+            (Position) { 0, 1 },
+            (Position) { 1, 1 },
+            (Position) { 2, 0 },
+            (Position) { 2, 1 },
+        } },
+    { // I
+        {
+            (Position) { 1, 0 },
+            (Position) { 1, 1 },
+            (Position) { 1, 2 },
+            (Position) { 1, 3 },
+        },
+        {
+            (Position) { 0, 2 },
+            (Position) { 1, 2 },
+            (Position) { 2, 2 },
+            (Position) { 3, 2 },
+        },
+        {
+            (Position) { 2, 0 },
+            (Position) { 2, 1 },
+            (Position) { 2, 2 },
+            (Position) { 2, 3 },
+        },
+        {
+            (Position) { 0, 1 },
+            (Position) { 1, 1 },
+            (Position) { 2, 1 },
+            (Position) { 3, 1 },
+        } },
+    { // O
+        {
+            (Position) { 0, 0 },
+            (Position) { 0, 1 },
+            (Position) { 1, 0 },
+            (Position) { 1, 1 },
+        } },
+    { // S
+        {
+            (Position) { 0, 1 },
+            (Position) { 0, 2 },
+            (Position) { 1, 0 },
+            (Position) { 1, 1 },
+        },
+        {
+            (Position) { 0, 1 },
+            (Position) { 1, 1 },
+            (Position) { 1, 2 },
+            (Position) { 2, 2 },
+        },
+        {
+            (Position) { 1, 1 },
+            (Position) { 1, 2 },
+            (Position) { 2, 0 },
+            (Position) { 2, 1 },
+        },
+        {
+            (Position) { 0, 0 },
+            (Position) { 1, 0 },
+            (Position) { 1, 1 },
+            (Position) { 2, 1 },
+        } },
+    { // T
+        {
+            (Position) { 0, 1 },
+            (Position) { 1, 0 },
+            (Position) { 1, 1 },
+            (Position) { 1, 2 },
+        },
+        {
+            (Position) { 0, 1 },
+            (Position) { 1, 1 },
+            (Position) { 1, 2 },
+            (Position) { 2, 1 },
+        },
+        {
+            (Position) { 1, 0 },
+            (Position) { 1, 1 },
+            (Position) { 1, 2 },
+            (Position) { 2, 1 },
+        },
+        {
+            (Position) { 0, 1 },
+            (Position) { 1, 0 },
+            (Position) { 1, 1 },
+            (Position) { 2, 1 },
+        } },
+    { // Z
+        {
+            (Position) { 0, 0 },
+            (Position) { 0, 1 },
+            (Position) { 1, 1 },
+            (Position) { 1, 2 },
+        },
+        {
+            (Position) { 0, 2 },
+            (Position) { 1, 1 },
+            (Position) { 1, 2 },
+            (Position) { 2, 1 },
+        },
+        {
+            (Position) { 1, 0 },
+            (Position) { 1, 1 },
+            (Position) { 2, 1 },
+            (Position) { 2, 2 },
+        },
+        {
+            (Position) { 0, 1 },
+            (Position) { 1, 0 },
+            (Position) { 1, 1 },
+            (Position) { 2, 0 },
+        } }
+};
+
+static const Position BLOCK_OFFSETS[NUM_BLOCKS] = {
+    (Position) { 0, 3 }, // L
+    (Position) { 0, 3 }, // J
+    (Position) { -1, 3 }, // I
+    (Position) { 0, 4 }, // O
+    (Position) { 0, 3 }, // S
+    (Position) { 0, 3 }, // T
+    (Position) { 0, 3 }, // Z
+};
+
+static const uint8_t BLOCK_ROTAIONS[NUM_BLOCKS] = {
+    4, 4, 4, 1, 4, 4, 4
+};
+
+// Some constants
+
+#define SCREEN_WIDTH 500
+#define SCREEN_HEIGHT 620
+#define SCREEN_TITLE "Tetris"
+#define FONT_SIZE 38
+#define FONT_SPACING 2
 
 #endif // TETRIS_H

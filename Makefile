@@ -7,7 +7,7 @@ BUILD ?= debug
 CC = gcc
 
 # Compiler flags
-CFLAGS = -std=gnu11 -Wall -Werror -Wextra -Wswitch-enum -Wunreachable-code
+CFLAGS = -std=c99 -Wall -Werror -Wextra -Wswitch-enum -Wunreachable-code
 
 # Platform detection
 UNAME_S := $(shell uname -s)

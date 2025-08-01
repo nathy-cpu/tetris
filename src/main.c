@@ -2,7 +2,8 @@
 
 int main(void)
 {
-    InitWindow(500, 620, "Tetris");
+    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE);
     SetTargetFPS(60);
     Game* game = Game_Init();
 

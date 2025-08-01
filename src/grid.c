@@ -8,18 +8,6 @@ Grid* Grid_Init(void)
     Grid* grid = malloc(sizeof(Grid));
     grid->numRows = GRID_ROWS;
     grid->numCols = GRID_COLUMNS;
-    grid->cellSize = GRID_CELL_SIZE;
-
-    // Initialize colors directly
-    grid->colors[0] = darkGrey;
-    grid->colors[1] = blue;
-    grid->colors[2] = orange;
-    grid->colors[3] = cyan;
-    grid->colors[4] = yellow;
-    grid->colors[5] = green;
-    grid->colors[6] = purple;
-    grid->colors[7] = red;
-
     memset(grid->grid, 0, sizeof(grid->grid));
     return grid;
 }
@@ -36,11 +24,6 @@ void Grid_Free(Grid* grid)
     }
 }
 
-Color Grid_GetCellColor(const Grid* grid, uint8_t cellValue)
-{
-    return grid->colors[cellValue];
-}
-
 void Grid_Print(const Grid* grid)
 {
     for (int row = 0; row < grid->numRows; row++) {
@@ -51,14 +34,26 @@ void Grid_Print(const Grid* grid)
     }
 }
 
-void Grid_Draw(const Grid* grid)
+void Grid_Draw(const Grid* grid, Texture2D tileSpriteSheet)
 {
     for (int row = 0; row < grid->numRows; row++) {
         for (int column = 0; column < grid->numCols; column++) {
             int cellValue = grid->grid[row][column];
-
-            DrawRectangle(column * grid->cellSize + 11, row * grid->cellSize + 11, grid->cellSize - 1, grid->cellSize - 1,
-                Grid_GetCellColor(grid, cellValue));
+            // draw each reactangle 11 pixels away from the top and left borders
+            if (cellValue == 0) {
+                DrawRectangle(
+                    column * GRID_CELL_SIZE + 11,
+                    row * GRID_CELL_SIZE + 11,
+                    GRID_CELL_SIZE,
+                    GRID_CELL_SIZE,
+                    BLOCK_COLORS[cellValue]);
+            } else {
+                DrawTexturePro(tileSpriteSheet,
+                    (Rectangle) { (cellValue - 1) * 16, 0, 16, 16 },
+                    (Rectangle) { column * GRID_CELL_SIZE + GRID_PADDING, row * GRID_CELL_SIZE + GRID_PADDING, GRID_CELL_SIZE - 1,
+                        GRID_CELL_SIZE - 1 },
+                    (Vector2) { 0, 0 }, 0, WHITE);
+            }
         }
     }
 }

@@ -24,9 +24,9 @@ Game* Game_Init()
     game->grid = Grid_Init();
 
     // Initialize block templates
-    for (size_t i = 0; i < game->numBlocks; i++) {
-        const char blockTypes[NUM_BLOCKS] = { 'I', 'J', 'L', 'O', 'S', 'T', 'Z' };
-        game->blocks[i] = Block_Init(blockTypes[i]);
+    for (uint8_t i = 1; i <= game->numBlocks; i++) {
+        // const char blockTypes[NUM_BLOCKS] = { 'I', 'J', 'L', 'O', 'S', 'T', 'Z' };
+        game->blocks[i - 1] = Block_Init((enum BlockType)i);
         assert(game->blocks[i] != NULL);
     }
 
@@ -101,33 +101,33 @@ void Game_Draw(const Game* game)
     assert(game->nextBlock != NULL);
     BeginDrawing();
     ClearBackground(darkBlue);
-    DrawTextEx(game->font, "Score", (Vector2) { 365, 15 }, 38, 2, WHITE);
-    DrawTextEx(game->font, "Next", (Vector2) { 370, 175 }, 38, 2, WHITE);
+    DrawTextEx(game->font, "Score", (Vector2) { 365, 15 }, FONT_SIZE, FONT_SPACING, WHITE);
+    DrawTextEx(game->font, "Next", (Vector2) { 370, 175 }, FONT_SIZE, FONT_SPACING, WHITE);
 
     if (game->gameOver) {
-        DrawTextEx(game->font, "GAME OVER", (Vector2) { 320, 450 }, 38, 2, WHITE);
+        DrawTextEx(game->font, "GAME OVER", (Vector2) { 320, 450 }, FONT_SIZE, FONT_SPACING, WHITE);
     }
 
     DrawRectangleRounded((Rectangle) { 320, 55, 170, 60 }, 0.3f, 6, lightBlue);
 
     char scoreText[10];
     sprintf(scoreText, "%d", game->score);
-    const Vector2 textSize = MeasureTextEx(game->font, scoreText, 38, 2);
+    const Vector2 textSize = MeasureTextEx(game->font, scoreText, FONT_SIZE, FONT_SPACING);
 
-    DrawTextEx(game->font, scoreText, (Vector2) { 320 + (170 - textSize.x) / 2, 65 }, 38, 2, WHITE);
+    DrawTextEx(game->font, scoreText, (Vector2) { 320 + (170 - textSize.x) / 2, 65 }, FONT_SIZE, FONT_SPACING, WHITE);
     DrawRectangleRounded((Rectangle) { 320, 215, 170, 180 }, 0.3f, 6, lightBlue);
-    Grid_Draw(game->grid);
-    Block_Draw(game->currentBlock, 11, 11);
+    Grid_Draw(game->grid, game->tileSpriteSheet);
+    Block_Draw(game->currentBlock, 11, 11, game->tileSpriteSheet, 1.0);
 
     switch (game->nextBlock->id) {
     case 3:
-        Block_Draw(game->nextBlock, 255, 290);
+        Block_Draw(game->nextBlock, 255, 290, game->tileSpriteSheet, 1.0);
         break;
     case 4:
-        Block_Draw(game->nextBlock, 255, 280);
+        Block_Draw(game->nextBlock, 255, 280, game->tileSpriteSheet, 1.0);
         break;
     default:
-        Block_Draw(game->nextBlock, 270, 270);
+        Block_Draw(game->nextBlock, 270, 270, game->tileSpriteSheet, 1.0);
         break;
     }
     EndDrawing();
@@ -191,9 +191,9 @@ void Game_HandleInput(Game* game)
 void Game_MoveBlockDown(Game* game)
 {
     if (!game->gameOver) {
-        Block_Move(game->currentBlock, 1, 0);
+        Block_Move(game->currentBlock, (Position) { 1, 0 });
         if (Game_IsBlockOutside(game) || Game_BlockFits(game) == false) {
-            Block_Move(game->currentBlock, -1, 0);
+            Block_Move(game->currentBlock, (Position) { -1, 0 });
             Game_LockBlock(game);
         }
     }
@@ -202,18 +202,18 @@ void Game_MoveBlockDown(Game* game)
 void Game_MoveBlockRight(Game* game)
 {
     if (!game->gameOver) {
-        Block_Move(game->currentBlock, 0, 1);
+        Block_Move(game->currentBlock, (Position) { 0, 1 });
         if (Game_IsBlockOutside(game) || Game_BlockFits(game) == false)
-            Block_Move(game->currentBlock, 0, -1);
+            Block_Move(game->currentBlock, (Position) { 0, -1 });
     }
 }
 
 void Game_MoveBlockLeft(Game* game)
 {
     if (!game->gameOver) {
-        Block_Move(game->currentBlock, 0, -1);
+        Block_Move(game->currentBlock, (Position) { 0, -1 });
         if (Game_IsBlockOutside(game) || Game_BlockFits(game) == false)
-            Block_Move(game->currentBlock, 0, 1);
+            Block_Move(game->currentBlock, (Position) { 0, 1 });
     }
 }
 
