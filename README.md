@@ -13,11 +13,12 @@ Heavily inspired by <https://github.com/KineticTactic/Tetris-C.git> and <https:/
 
 ## Building and running
 
-It is possible to set the 'CC' (C compiler) and 'BUILD' variables in a .env file in the root of the project as such:
+It is possible to set the 'CC' (C compiler), 'OS' and 'BUILD' variables in a .env file in the root of the project as such:
 
 ```env
 CC=         # gcc or clang
 BUILD=      # debug or release
+OS=         # Linux, Darwin or Windows_NT
 ```
 
 or set them in environment variables. Then build using:
