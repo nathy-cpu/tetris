@@ -7,17 +7,26 @@ Heavily inspired by <https://github.com/KineticTactic/Tetris-C.git> and <https:/
 
 - a C compiler compiler (`gcc` or `clang`)
 - `make` for building and running
+- `clang-format` for formatting code
+- `clang-tidy` for linting
 - raylib v5.5 built (as a shared library) and added to path
 
 ## Building and running
 
-```sh
-make build # or just make
+It is possible to set the 'CC' (C compiler) and 'BUILD' variables in a .env file in the root of the project as such:
+
+```env
+CC=         # gcc or clang
+BUILD=      # debug or release
 ```
 
-The default build target produces a debug build with ASAN and UBSAN enabled.
+or set them in environment variables. Then build using:
 
-for release builds:
+```sh
+make build
+```
+
+The default build target produces a debug build, with ASAN and UBSAN enabled if on linux. If no input is supplied through .env file or environment variables, It will default to using `clang` and build using debug profile. and for release builds:
 
 ```sh
 make build BUILD=release

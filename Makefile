@@ -10,7 +10,7 @@ endif
 BUILD ?= debug
 
 # Compiler
-CC ?= gcc
+CC ?= clang
 
 # Compiler flags
 CFLAGS = -std=c99 -Wall -Werror -Wextra -Wswitch-enum -Wunreachable-code
