@@ -5,9 +5,9 @@ Heavily inspired by <https://github.com/KineticTactic/Tetris-C.git> and <https:/
 
 ## Dependencies
 
-- `gcc` compiler
+- a C compiler compiler (`gcc` or `clang`)
 - `make` for building and running
-- raylib 5.5 built (preferable as a shared library) and added to path
+- raylib v5.5 built (as a shared library) and added to path
 
 ## Building and running
 
