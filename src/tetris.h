@@ -16,8 +16,7 @@ typedef struct
 
 // Block
 
-typedef enum
-{
+typedef enum {
     Z = 1,
     S,
     T,
@@ -42,37 +41,37 @@ typedef struct
 
 } Block;
 
-void Block_GetCellPositions(const Block *block, Position *positions, size_t *count);
+void Block_GetCellPositions(const Block* block, Position* positions, size_t* count);
 
-void Block_Draw(const Block *block, int offsetX, int offsetY, Texture2D tileSpriteSheet, float opacity);
+void Block_Draw(const Block* block, int offsetX, int offsetY, Texture2D tileSpriteSheet, float opacity);
 
-void Block_Move(Block *block, Position position);
+void Block_Move(Block* block, Position position);
 
-void Block_Rotate(Block *block);
+void Block_Rotate(Block* block);
 
-void Block_UndoRotation(Block *block);
+void Block_UndoRotation(Block* block);
 
-Block *Block_Init(BlockType type);
+Block* Block_Init(BlockType type);
 
-Block *Block_Clone(const Block *src);
+Block* Block_Clone(const Block* src);
 
-void Block_Copy(Block *dest, const Block *src);
+void Block_Copy(Block* dest, const Block* src);
 
-void Block_Free(Block *block);
+void Block_Free(Block* block);
 
-Block *GetRandomBlock();
+Block* GetRandomBlock();
 
 // Colors
-static const Color darkGrey = {26, 31, 40, 255};
-static const Color lightBlue = {59, 85, 162, 255};
-static const Color darkBlue = {44, 44, 127, 255};
-static const Color blue = {13, 64, 216, 255};
-static const Color orange = {226, 116, 17, 255};
-static const Color cyan = {21, 204, 209, 255};
-static const Color yellow = {237, 234, 4, 255};
-static const Color green = {47, 230, 23, 255};
-static const Color purple = {166, 0, 247, 255};
-static const Color red = {232, 18, 18, 255};
+static const Color darkGrey = { 26, 31, 40, 255 };
+static const Color lightBlue = { 59, 85, 162, 255 };
+static const Color darkBlue = { 44, 44, 127, 255 };
+static const Color blue = { 13, 64, 216, 255 };
+static const Color orange = { 226, 116, 17, 255 };
+static const Color cyan = { 21, 204, 209, 255 };
+static const Color yellow = { 237, 234, 4, 255 };
+static const Color green = { 47, 230, 23, 255 };
+static const Color purple = { 166, 0, 247, 255 };
+static const Color red = { 232, 18, 18, 255 };
 
 // Board
 
@@ -89,27 +88,27 @@ typedef struct
 
 } Board;
 
-Board *Board_Init();
+Board* Board_Init();
 
-void Board_Free(Board *board);
+void Board_Free(Board* board);
 
-void Board_Reset(Board *board);
+void Board_Reset(Board* board);
 
-void Board_Print(const Board *board);
+void Board_Print(const Board* board);
 
-void Board_Draw(const Board *board, Texture2D tileSpriteSheet);
+void Board_Draw(const Board* board, Texture2D tileSpriteSheet);
 
-bool Board_IsCellOutside(const Board *board, int8_t row, int8_t column);
+bool Board_IsCellOutside(const Board* board, int8_t row, int8_t column);
 
-bool Board_IsEmpty(const Board *board, uint8_t row, uint8_t column);
+bool Board_IsEmpty(const Board* board, uint8_t row, uint8_t column);
 
-bool Board_IsRowFull(const Board *board, uint8_t row);
+bool Board_IsRowFull(const Board* board, uint8_t row);
 
-void Board_ClearRow(Board *board, uint8_t row);
+void Board_ClearRow(Board* board, uint8_t row);
 
-void Board_MoveRowDown(Board *board, uint8_t row, uint8_t numRows);
+void Board_MoveRowDown(Board* board, uint8_t row, uint8_t numRows);
 
-uint8_t Board_ClearFullRows(Board *board);
+uint8_t Board_ClearFullRows(Board* board);
 
 // Game
 #define NUM_BLOCKS 7
@@ -125,212 +124,213 @@ typedef struct
     Sound hardDropSound;
     size_t numBlocks;
     Texture2D tileSpriteSheet;
-    Board *board;
-    Block *currentBlock;
-    Block *nextBlock;
-    Block *shadowBlock;
+    Board* board;
+    Block* currentBlock;
+    Block* nextBlock;
+    Block* shadowBlock;
     uint32_t score;
     bool gameOver;
 
 } Game;
 
-Game *Game_Init();
+Game* Game_Init();
 
-void Game_Update(Game *game);
+void Game_Update(Game* game);
 
-void Game_Close(Game *game);
+void Game_Close(Game* game);
 
-void Game_Draw(const Game *game);
+void Game_Draw(const Game* game);
 
-void Game_HandleInput(Game *game);
+void Game_HandleInput(Game* game);
 
-void Game_MoveBlockDown(Game *game);
+void Game_MoveBlockDown(Game* game);
 
-void Game_MoveBlockRight(Game *game);
+void Game_MoveBlockRight(Game* game);
 
-void Game_MoveBlockLeft(Game *game);
+void Game_MoveBlockLeft(Game* game);
 
-void Game_DropBlock(Game *game);
+void Game_DropBlock(Game* game);
 
-bool Game_IsBlockOutside(const Game *game);
+bool Game_IsBlockOutside(const Game* game);
 
-void Game_RotateBlock(Game *game);
+void Game_RotateBlock(Game* game);
 
-void Game_LockBlock(Game *game, bool isHardDrop);
+void Game_LockBlock(Game* game, bool isHardDrop);
 
-bool Game_BlockFits(const Game *game);
+bool Game_BlockFits(const Game* game);
 
-void Game_UpdateShadowBlock(Game *game);
+void Game_UpdateShadowBlock(Game* game);
 
-void Game_Reset(Game *game);
+void Game_Reset(Game* game);
 
-void Game_UpdateScore(Game *game, uint32_t linesCleared, uint32_t moveDownPoints);
+void Game_UpdateScore(Game* game, uint32_t linesCleared, uint32_t moveDownPoints);
 
 static const Position BLOCK_LAYOUTS[NUM_BLOCKS][ROTATION_STATES][NUM_BLOCK_CELLS] = {
-    {// Z
-     {
-         {0, 0},
-         {0, 1},
-         {1, 1},
-         {1, 2},
-     },
-     {
-         {0, 2},
-         {1, 1},
-         {1, 2},
-         {2, 1},
-     },
-     {
-         {1, 0},
-         {1, 1},
-         {2, 1},
-         {2, 2},
-     },
-     {
-         {0, 1},
-         {1, 0},
-         {1, 1},
-         {2, 0},
-     }},
-    {// S
-     {
-         {0, 1},
-         {0, 2},
-         {1, 0},
-         {1, 1},
-     },
-     {
-         {0, 1},
-         {1, 1},
-         {1, 2},
-         {2, 2},
-     },
-     {
-         {1, 1},
-         {1, 2},
-         {2, 0},
-         {2, 1},
-     },
-     {
-         {0, 0},
-         {1, 0},
-         {1, 1},
-         {2, 1},
-     }},
-    {// T
-     {
-         {0, 1},
-         {1, 0},
-         {1, 1},
-         {1, 2},
-     },
-     {
-         {0, 1},
-         {1, 1},
-         {1, 2},
-         {2, 1},
-     },
-     {
-         {1, 0},
-         {1, 1},
-         {1, 2},
-         {2, 1},
-     },
-     {
-         {0, 1},
-         {1, 0},
-         {1, 1},
-         {2, 1},
-     }},
-    {// L
-     {
-         {0, 2},
-         {1, 0},
-         {1, 1},
-         {1, 2}},
-     {{0, 1},
-      {1, 1},
-      {2, 1},
-      {2, 2}},
-     {{1, 0},
-      {1, 1},
-      {1, 2},
-      {2, 0}},
-     {{0, 0},
-      {0, 1},
-      {1, 1},
-      {2, 1}}},
-    {// J
-     {
-         {0, 0},
-         {1, 0},
-         {1, 1},
-         {1, 2},
-     },
-     {
-         {0, 1},
-         {0, 2},
-         {1, 1},
-         {2, 1},
-     },
-     {
-         {1, 0},
-         {1, 1},
-         {1, 2},
-         {2, 2},
-     },
-     {
-         {0, 1},
-         {1, 1},
-         {2, 0},
-         {2, 1},
-     }},
-    {// I
-     {
-         {1, 0},
-         {1, 1},
-         {1, 2},
-         {1, 3},
-     },
-     {
-         {0, 2},
-         {1, 2},
-         {2, 2},
-         {3, 2},
-     },
-     {
-         {2, 0},
-         {2, 1},
-         {2, 2},
-         {2, 3},
-     },
-     {
-         {0, 1},
-         {1, 1},
-         {2, 1},
-         {3, 1},
-     }},
-    {// O
-     {
-         {0, 0},
-         {0, 1},
-         {1, 0},
-         {1, 1},
-     }},
+    { // Z
+        {
+            { 0, 0 },
+            { 0, 1 },
+            { 1, 1 },
+            { 1, 2 },
+        },
+        {
+            { 0, 2 },
+            { 1, 1 },
+            { 1, 2 },
+            { 2, 1 },
+        },
+        {
+            { 1, 0 },
+            { 1, 1 },
+            { 2, 1 },
+            { 2, 2 },
+        },
+        {
+            { 0, 1 },
+            { 1, 0 },
+            { 1, 1 },
+            { 2, 0 },
+        } },
+    { // S
+        {
+            { 0, 1 },
+            { 0, 2 },
+            { 1, 0 },
+            { 1, 1 },
+        },
+        {
+            { 0, 1 },
+            { 1, 1 },
+            { 1, 2 },
+            { 2, 2 },
+        },
+        {
+            { 1, 1 },
+            { 1, 2 },
+            { 2, 0 },
+            { 2, 1 },
+        },
+        {
+            { 0, 0 },
+            { 1, 0 },
+            { 1, 1 },
+            { 2, 1 },
+        } },
+    { // T
+        {
+            { 0, 1 },
+            { 1, 0 },
+            { 1, 1 },
+            { 1, 2 },
+        },
+        {
+            { 0, 1 },
+            { 1, 1 },
+            { 1, 2 },
+            { 2, 1 },
+        },
+        {
+            { 1, 0 },
+            { 1, 1 },
+            { 1, 2 },
+            { 2, 1 },
+        },
+        {
+            { 0, 1 },
+            { 1, 0 },
+            { 1, 1 },
+            { 2, 1 },
+        } },
+    { // L
+        {
+            { 0, 2 },
+            { 1, 0 },
+            { 1, 1 },
+            { 1, 2 } },
+        { { 0, 1 },
+            { 1, 1 },
+            { 2, 1 },
+            { 2, 2 } },
+        { { 1, 0 },
+            { 1, 1 },
+            { 1, 2 },
+            { 2, 0 } },
+        { { 0, 0 },
+            { 0, 1 },
+            { 1, 1 },
+            { 2, 1 } } },
+    { // J
+        {
+            { 0, 0 },
+            { 1, 0 },
+            { 1, 1 },
+            { 1, 2 },
+        },
+        {
+            { 0, 1 },
+            { 0, 2 },
+            { 1, 1 },
+            { 2, 1 },
+        },
+        {
+            { 1, 0 },
+            { 1, 1 },
+            { 1, 2 },
+            { 2, 2 },
+        },
+        {
+            { 0, 1 },
+            { 1, 1 },
+            { 2, 0 },
+            { 2, 1 },
+        } },
+    { // I
+        {
+            { 1, 0 },
+            { 1, 1 },
+            { 1, 2 },
+            { 1, 3 },
+        },
+        {
+            { 0, 2 },
+            { 1, 2 },
+            { 2, 2 },
+            { 3, 2 },
+        },
+        {
+            { 2, 0 },
+            { 2, 1 },
+            { 2, 2 },
+            { 2, 3 },
+        },
+        {
+            { 0, 1 },
+            { 1, 1 },
+            { 2, 1 },
+            { 3, 1 },
+        } },
+    { // O
+        {
+            { 0, 0 },
+            { 0, 1 },
+            { 1, 0 },
+            { 1, 1 },
+        } },
 };
 
 static const Position BLOCK_OFFSETS[NUM_BLOCKS] = {
-    {0, 3},  // Z
-    {0, 3},  // S
-    {0, 3},  // T
-    {0, 3},  // L
-    {0, 3},  // J
-    {-1, 3}, // I
-    {0, 4},  // O
+    { 0, 3 }, // Z
+    { 0, 3 }, // S
+    { 0, 3 }, // T
+    { 0, 3 }, // L
+    { 0, 3 }, // J
+    { -1, 3 }, // I
+    { 0, 4 }, // O
 };
 
 static const uint8_t BLOCK_ROTAIONS[NUM_BLOCKS] = {
-    4, 4, 4, 4, 4, 4, 1};
+    4, 4, 4, 4, 4, 4, 1
+};
 
 // Some constants
 

@@ -162,7 +162,8 @@ void Game_MoveBlockDown(Game* game)
     }
 }
 
-void Game_DropBlock(Game* game) {
+void Game_DropBlock(Game* game)
+{
     Block_Copy(game->currentBlock, game->shadowBlock);
     Game_LockBlock(game, true);
 }
@@ -185,7 +186,8 @@ void Game_MoveBlockLeft(Game* game)
     }
 }
 
-bool isBlockOutside(const Board* board, const Block* block) {
+bool isBlockOutside(const Board* board, const Block* block)
+{
     assert(board && block);
     Position positions[4];
     size_t count;
@@ -252,7 +254,8 @@ void Game_LockBlock(Game* game, bool isHardDrop)
     }
 }
 
-bool blockFits(const Board* board, const Block* block) {
+bool blockFits(const Board* board, const Block* block)
+{
     Position positions[NUM_BLOCK_CELLS];
     size_t count;
     Block_GetCellPositions(block, positions, &count);
@@ -271,7 +274,8 @@ bool Game_BlockFits(const Game* game)
     return blockFits(game->board, game->currentBlock);
 }
 
-void Game_UpdateShadowBlock(Game* game) {
+void Game_UpdateShadowBlock(Game* game)
+{
     Block_Copy(game->shadowBlock, game->currentBlock);
 
     while (!isBlockOutside(game->board, game->shadowBlock) && blockFits(game->board, game->shadowBlock))

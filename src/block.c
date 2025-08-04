@@ -6,46 +6,44 @@
 #include <stdlib.h>
 #include <string.h>
 
-void Block_GetCellPositions(const Block *block, Position *positions, size_t *count)
+void Block_GetCellPositions(const Block* block, Position* positions, size_t* count)
 {
     *count = NUM_BLOCK_CELLS;
-    for (int i = 0; i < NUM_BLOCK_CELLS; i++)
-    {
+    for (int i = 0; i < NUM_BLOCK_CELLS; i++) {
         positions[i].row = BLOCK_LAYOUTS[block->id - 1][block->rotationState][i].row + block->rowOffset;
         positions[i].column = BLOCK_LAYOUTS[block->id - 1][block->rotationState][i].column + block->columnOffset;
     }
 }
 
-void Block_Draw(const Block *block, int offsetX, int offsetY, Texture2D tileSpriteSheet, float opacity)
+void Block_Draw(const Block* block, int offsetX, int offsetY, Texture2D tileSpriteSheet, float opacity)
 {
     Position positions[NUM_BLOCK_CELLS];
     size_t count;
     Block_GetCellPositions(block, positions, &count);
 
-    for (size_t i = 0; i < count; i++)
-    {
+    for (size_t i = 0; i < count; i++) {
         DrawTexturePro(
             tileSpriteSheet,
-            (Rectangle){(block->id - 1) * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE},
-            (Rectangle){positions[i].column * CELL_SIZE + offsetX, positions[i].row * CELL_SIZE + offsetY, CELL_SIZE, CELL_SIZE},
-            (Vector2){0, 0}, 0, Fade(WHITE, opacity));
+            (Rectangle) { (block->id - 1) * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE },
+            (Rectangle) { positions[i].column * CELL_SIZE + offsetX, positions[i].row * CELL_SIZE + offsetY, CELL_SIZE, CELL_SIZE },
+            (Vector2) { 0, 0 }, 0, Fade(WHITE, opacity));
     }
 }
 
-void Block_Move(Block *block, Position position)
+void Block_Move(Block* block, Position position)
 {
     block->rowOffset += position.row;
     block->columnOffset += position.column;
 }
 
-void Block_Rotate(Block *block)
+void Block_Rotate(Block* block)
 {
     block->rotationState++;
     if (block->rotationState >= block->numRotations)
         block->rotationState = 0;
 }
 
-void Block_UndoRotation(Block *block)
+void Block_UndoRotation(Block* block)
 {
     if (block->rotationState == 0)
         block->rotationState = block->numRotations - 1;
@@ -53,9 +51,9 @@ void Block_UndoRotation(Block *block)
         block->rotationState--;
 }
 
-Block *Block_Init(BlockType type)
+Block* Block_Init(BlockType type)
 {
-    Block *block = malloc(sizeof(Block));
+    Block* block = malloc(sizeof(Block));
     block->rotationState = 0;
     block->rowOffset = 0;
     block->columnOffset = 0;
@@ -66,29 +64,28 @@ Block *Block_Init(BlockType type)
     return block;
 }
 
-Block *Block_Clone(const Block *src)
+Block* Block_Clone(const Block* src)
 {
-    Block *block = malloc(sizeof(Block));
+    Block* block = malloc(sizeof(Block));
     memcpy(block, src, sizeof(Block));
     return block;
 }
 
-void Block_Copy(Block *dest, const Block *src)
+void Block_Copy(Block* dest, const Block* src)
 {
     assert(dest && src);
     memcpy(dest, src, sizeof(Block));
 }
 
-void Block_Free(Block *block)
+void Block_Free(Block* block)
 {
-    if (block)
-    {
+    if (block) {
         free(block);
     }
 }
 
-Block *GetRandomBlock()
+Block* GetRandomBlock()
 {
     const int randomType = GetRandomValue(0, INT32_MAX) % NUM_BLOCKS;
-    return Block_Init((enum BlockType)randomType + 1);
+    return Block_Init((BlockType)randomType + 1);
 }
