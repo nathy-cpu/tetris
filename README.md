@@ -13,12 +13,13 @@ Heavily inspired by <https://github.com/KineticTactic/Tetris-C.git> and <https:/
 
 ## Building and running
 
-It is possible to set the 'CC' (C compiler), 'OS' and 'BUILD' variables in a .env file in the root of the project as such:
+It is possible to set the 'CC' (C compiler), 'OS', 'ENABLE_SAN' and 'BUILD' variables in a .env file in the root of the project as such:
 
 ```env
-CC=         # gcc or clang
-BUILD=      # debug or release
-OS=         # Linux, Darwin or Windows_NT
+CC=            # gcc or clang
+BUILD=         # debug or release
+OS=            # Linux, Darwin or Windows_NT
+ENABLE_SAN=    # true or false; whether to enable sanitizers
 ```
 
 or set them in environment variables. Then build using:
@@ -27,7 +28,7 @@ or set them in environment variables. Then build using:
 make build
 ```
 
-The default build target produces a debug build, with ASAN and UBSAN enabled if on linux. If no input is supplied through .env file or environment variables, It will default to using `clang` and build using debug profile. and for release builds:
+The default build target produces a debug build, with ASAN and UBSAN disabled. If no input is supplied through .env file or environment variables, It will default to using `clang` and build using debug profile. and for release builds:
 
 ```sh
 make build BUILD=release

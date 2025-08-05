@@ -9,15 +9,17 @@ endif
 # Default build type (debug)
 BUILD ?= debug
 
+# Platform detection
+OS ?= $(OS)
+
+# Whether to enable address/ub sanitizers
+ENABLE_SAN ?= false
+
 # Compiler
 CC ?= clang
 
 # Compiler flags
 CFLAGS = -std=c99 -Wall -Werror -Wextra -Wswitch-enum -Wunreachable-code
-
-
-# Platform detection
-OS := $(OS)
 
 # Platform-specific settings
 ifeq ($(OS),Linux)
@@ -39,9 +41,11 @@ ifeq ($(BUILD),release)
 	LDFLAGS += -s
 else
 	CFLAGS += -g -O0 
-	ifneq ($(OS),Windows_NT)
-		CFLAGS += -fsanitize=undefined -fsanitize=address
-	endif
+endif
+
+# Enable ASAN and UBSAN sanitizers if configured
+ifeq ($(ENABLE_SAN),true)
+	CFLAGS += -fsanitize=undefined -fsanitize=address
 endif
 
 # Source files
@@ -55,9 +59,6 @@ else
     TARGET = $(BIN_DIR)/tetris
 endif
 
-# Ensure bin/ exists
-# $(shell mkdir -p $(BIN_DIR))
-
 # Default target
 all: build
 
@@ -67,14 +68,13 @@ build: clean $(BIN_DIR) $(TARGET)
 $(TARGET): $(SRCS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-.PHONY: $(BIN_DIR)
+# Ensuring bin directory is present
 $(BIN_DIR):
 ifeq ($(OS),Windows_NT)
 	@if not exist $(BIN_DIR) mkdir $(BIN_DIR)
 else
 	@mkdir -p $(BIN_DIR)
 endif
-
 
 # Format target using clang-format with WebKit style
 ifeq ($(OS),Windows_NT)
