@@ -80,7 +80,7 @@ void Game_Update(Game* game)
         UpdateMusicStream(game->music);
     }
 
-    if (EventTriggered(&dropTimer, 0.3))
+    if (EventTriggered(&dropTimer, MOVE_DELAY))
         Game_MoveBlockDown(game);
 }
 

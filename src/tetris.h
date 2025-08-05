@@ -339,6 +339,7 @@ static const uint8_t BLOCK_ROTAIONS[NUM_BLOCKS] = {
 #define SCREEN_TITLE "Tetris"
 #define FONT_SIZE 38
 #define FONT_SPACING 2
+#define MOVE_DELAY 0.3
 #define SPRITE_SIZE 16
 
 #endif // TETRIS_H
